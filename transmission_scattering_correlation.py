@@ -1,3 +1,12 @@
+# Author: Andrei Savici
+#
+# Purpose: find out correlation between scattered intensities and transmited intensities
+#
+# Crystal at certain orientation may strongly scatter the incident neutrons.
+# This script plot transmission intensity (2nd monitor) and scattering intensity
+# at certain bragg angle (from masked detector pixels) vs the sample angles and
+# look for correlations
+
 runs300K=range(40402,40419)+range(40422,40427)+range(40430,40492)+range(40497,40534)
 time_interval1=[5400,5500]
 time_interval2=[8400,8600]
