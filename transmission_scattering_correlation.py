@@ -7,10 +7,12 @@
 # at certain bragg angle (from masked detector pixels) vs the sample angles and
 # look for correlations
 
+# Inputs
 runs300K=range(40402,40419)+range(40422,40427)+range(40430,40492)+range(40497,40534)
 time_interval1=[5400,5500]
 time_interval2=[8400,8600]
 
+# Results
 angles=[]
 mon1_array=[]
 mon2_array=[]
@@ -21,12 +23,14 @@ error_array=[]
 masked_data_array=[]
 masked_error_array=[]
 
+# this mask file was created by hand using Mantidplot GUI
 MaskWs=LoadMask('ARCS','/home/3y9/Desktop/monvsAngle_mask.xml')
 
 runs=runs300K
 for runnumber in runs:
     print runnumber
     filename='/SNS/ARCS/IPTS-9265/data/ARCS_'+str(runnumber)+'_event.nxs'
+    # monitor
     w=LoadNexusMonitors(Filename=filename)
     w=NormaliseByCurrent(w)
     mon1=Integration(InputWorkspace=w,RangeLower=time_interval1[0],RangeUpper=time_interval1[1],StartWorkspaceIndex=0,EndWorkspaceIndex=0)
@@ -41,6 +45,7 @@ for runnumber in runs:
     mon2_array.append(mon2_value)
     mon1e_array.append(mon1_err)
     mon2e_array.append(mon2_err)
+    # detector
     w=Load(Filename=filename)
     w=NormaliseByCurrent(w)
     all=SumSpectra(w)
@@ -50,8 +55,9 @@ for runnumber in runs:
     masked=SumSpectra(w)
     masked_data_array.append(masked.readY(0)[0])
     masked_error_array.append(masked.readE(0)[0])
-    
-    
+    continue    
+
+# save as workspace
 Monitor1=CreateWorkspace(angles,mon1_array,mon1e_array)
 Monitor2=CreateWorkspace(angles,mon2_array,mon2e_array)
 AllData=CreateWorkspace(angles,data_array,error_array)
