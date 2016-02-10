@@ -12,6 +12,9 @@ runs300K=range(40402,40419)+range(40422,40427)+range(40430,40492)+range(40497,40
 time_interval1=[5400,5500]
 time_interval2=[8400,8600]
 
+
+from mantid.simpleapi import *
+
 # Results
 angles=[]
 mon1_array=[]
@@ -24,7 +27,7 @@ masked_data_array=[]
 masked_error_array=[]
 
 # this mask file was created by hand using Mantidplot GUI
-MaskWs=LoadMask('ARCS','/home/3y9/Desktop/monvsAngle_mask.xml')
+MaskWs=LoadMask('ARCS','monvsAngle_mask.xml')
 
 runs=runs300K
 for runnumber in runs:
