@@ -24,11 +24,13 @@ def computeICParams(E):
     return [func(E) for func in funcs]
 
 def IC(t, A, B, R, to):
-    return (1.-R)*A/2.*(A*(t-to*10))**2 * np.exp(-A*(t-to*10)) \
+    r = (1.-R)*A/2.*(A*(t-to*10))**2 * np.exp(-A*(t-to*10)) \
         +R*B*(A/(A-B))**3 *(
             np.exp(-B*(t-to*10)) 
             - np.exp(-A*(t-to*10))*(1+(A-B)*(t-to*10)+0.5*(A-B)**2*(t-to*10)**2)
         )
+    r[t<to*10] = 0
+    return r
 
 def plot_IC(E):
     params = computeICParams(E)
@@ -41,6 +43,16 @@ def plot_IC(E):
     plt.close()
     return
 
+def check_IC_sumrule(E):
+    params = computeICParams(E)
+    t0 = params[-1]
+    # print t0
+    t = np.arange(0, 100., 0.1)
+    I = IC(t, *params)
+    dt = t[1]-t[0]
+    assert np.isclose(I.sum()*dt, 1, rtol=2e-2)
+    return
+
 def test_computeICParams():
     print computeICParams(0.70795)
     print computeICParams(0.63096)
@@ -48,8 +60,10 @@ def test_computeICParams():
     return
 
 def test_IC():
-    plot_IC(100*1e-3)
-    plot_IC(700*1e-3)
+    # plot_IC(100*1e-3)
+    # plot_IC(700*1e-3)
+    check_IC_sumrule(100*1e-3)
+    check_IC_sumrule(700*1e-3)
     return
 
 def main():
