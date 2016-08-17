@@ -1,5 +1,7 @@
 #!/usr/bin/env python
 
+import numpy as np
+
 # this function
 def f(x, a,b,c,d,f,g,h,i,j,k):
     return a*x**b*(1+c*x+d*x**2+(x/f)**g)/(1+h*x+i*x**2+(x/j)**k)
@@ -21,14 +23,38 @@ def computeICParams(E):
     "compute parameters in Ikeda Carpenter function for given E (eV)"
     return [func(E) for func in funcs]
 
+def IC(t, A, B, R, to):
+    return (1.-R)*A/2.*(A*(t-to*10))**2 * np.exp(-A*(t-to*10)) \
+        +R*B*(A/(A-B))**3 *(
+            np.exp(-B*(t-to*10)) 
+            - np.exp(-A*(t-to*10))*(1+(A-B)*(t-to*10)+0.5*(A-B)**2*(t-to*10)**2)
+        )
+
+def plot_IC(E):
+    params = computeICParams(E)
+    t = np.arange(0, 100., 0.1)
+    I = IC(t, *params)
+    from matplotlib import pyplot as plt
+    plt.figure()
+    plt.plot(t,I)
+    plt.show()
+    plt.close()
+    return
+
 def test_computeICParams():
     print computeICParams(0.70795)
     print computeICParams(0.63096)
     print computeICParams(0.686)
     return
 
+def test_IC():
+    plot_IC(100*1e-3)
+    plot_IC(700*1e-3)
+    return
+
 def main():
     test_computeICParams()
+    test_IC()
     return
 
 if __name__ == '__main__': main()
