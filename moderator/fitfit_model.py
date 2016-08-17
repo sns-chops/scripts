@@ -10,7 +10,7 @@ class Instrument:
         return I_E(E, c, R1, T1, R2, T2, R3, T3, a, b, Ecut, s, delta, g, I)
 
     def IC_atE(self, E):
-        "E: meV"
+        "E: unit eV"
         A,B,R,to = self.computeICParams(E)
         def _(t):
             return IC(t, A,B,R,to)
