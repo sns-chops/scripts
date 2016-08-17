@@ -15,13 +15,20 @@ def build_func(param_str):
     params = map(float, param_str.split())
     return lambda x: f(x, *params)
 
-
 funcs = map(build_func, (A,B,R,to))
 
-def compute(E):
+def computeICParams(E):
+    "compute parameters in Ikeda Carpenter function for given E (eV)"
     return [func(E) for func in funcs]
 
-if __name__ == '__main__':
-    print compute(0.70795)
-    print compute(0.63096)
-    print compute(0.686)
+def test_computeICParams():
+    print computeICParams(0.70795)
+    print computeICParams(0.63096)
+    print computeICParams(0.686)
+    return
+
+def main():
+    test_computeICParams()
+    return
+
+if __name__ == '__main__': main()
