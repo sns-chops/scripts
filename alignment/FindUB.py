@@ -37,25 +37,37 @@ if mtd.doesExist('mdmesh'):
 
 for index, r in enumerate(runs):
     print "Run %d of %d, Processing converting MD for run : %s" %(index+1, totalrun, r)
-    ows=instrument + '_'+str(r)
+    ows=instrument + '_'+str(r) # ARCS_#####
     toMerge1.append(ows)
+    # event file path
     filename=nxdir+instrument+'_'+str(r)+'.nxs.h5'
+    # load
     LoadEventNexus(Filename=filename, OutputWorkspace=ows)
+    # this is useful if we need to load a special IDF
     #LoadInstrument(Workspace= ows, Filename=IDFfile,RewriteSpectraMap=False)
+    # workspace loaded
     dataR=mtd[ows]
+    # read psi angle
     Omega = dataR.getRun().getLogData(omega_nxs_entry_name).value.mean()+ 0
     # temp= dataR.getRun().getLogData('BL14B:SE:SampleTemp').value.mean()
     # print 'Omega = %5.2f deg., Temp = %5.2f K' %(Omega, temp)
     #MaskDetectors(Workspace=ows,MaskedWorkspace=mask)
+    # use the psi angle
     SetGoniometer(ows,Axis0=str(Omega)+',0,1,0,1') 
+    # get I(Q). don't care inelastic
     mdmesh = ConvertToMD(
         InputWorkspace=ows, QDimensions='Q3D',dEAnalysisMode='Elastic', Q3DFrames='Q_sample', 
         LorentzCorrection='1', MinValues='-6.1,-6.1,-6.1',MaxValues='6.1,6.1,6.1', OverwriteExisting = 0
     )
 
+# this code is weird. should not we add things together?
+
+# put everything together
 data=GroupWorkspaces(toMerge1)
 
+# find diffraction peaks
 FindPeaksMD(InputWorkspace='mdmesh', PeakDistanceThreshold=0.5, MaxPeaks=100, DensityThresholdFactor=2000, OutputWorkspace='peaks')
+# calc UB
 FindUBUsingLatticeParameters(
     PeaksWorkspace='peaks', a=a, b=b, c=c, alpha=alpha, beta=beta, gamma=gamma, Tolerance=0.45, FixParameters=True)
 IndexPeaks(PeaksWorkspace='peaks', Tolerance=0.45, RoundHKLs=False)
